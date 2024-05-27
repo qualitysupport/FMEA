@@ -1,0 +1,54 @@
+library(shiny)
+
+# Define the UI
+ui <- fluidPage(
+  titlePanel("FMEA Risk Priority Number (RPN) Calculator"),
+  sidebarLayout(
+    sidebarPanel(
+      h3("Input Instructions"),
+      p("Enter the ratings for Severity, Occurrence, and Detection, each on a scale from 1 to 10."),
+      p("Severity (S): How serious is the effect of the failure? (1 = Not Severe, 10 = Extremely Severe)"),
+      p("Occurrence (O): How frequently does the failure occur? (1 = Very Unlikely, 10 = Very Likely)"),
+      p("Detection (D): How likely is it that the failure will be detected before it causes an issue? (1 = Very Likely, 10 = Very Unlikely)"),
+      numericInput("severity", "Severity (1-10):", value = 1, min = 1, max = 10),
+      numericInput("occurrence", "Occurrence (1-10):", value = 1, min = 1, max = 10),
+      numericInput("detection", "Detection (1-10):", value = 1, min = 1, max = 10),
+      actionButton("calculate", "Calculate RPN")
+    ),
+    mainPanel(
+      h3("RPN Calculation Result"),
+      verbatimTextOutput("rpn_output"),
+      h3("Explanation"),
+      p("The Risk Priority Number (RPN) is calculated using the formula: RPN = Severity (S) × Occurrence (O) × Detection (D)."),
+      p("Severity (S) is the seriousness of the effect of the failure mode. It is rated on a scale from 1 to 10, where 1 indicates negligible impact and 10 indicates extremely severe impact."),
+      p("Occurrence (O) is the frequency with which the failure mode occurs. It is rated on a scale from 1 to 10, where 1 indicates very unlikely to occur and 10 indicates very likely to occur."),
+      p("Detection (D) is the likelihood of detecting the failure before it reaches the customer. It is rated on a scale from 1 to 10, where 1 indicates very likely to be detected and 10 indicates very unlikely to be detected."),
+      p("The calculated RPN helps prioritize which failure modes to address first. A higher RPN indicates a higher priority for action.")
+    )
+  )
+)
+
+
+
+
+
+
+
+# Define server logic
+server <- function(input, output) {
+  
+  observeEvent(input$calculate, {
+    severity <- input$severity
+    occurrence <- input$occurrence
+    detection <- input$detection
+    
+    rpn <- severity * occurrence * detection
+    
+    output$rpn_output <- renderText({
+      paste("The Risk Priority Number (RPN) is:", rpn)
+    })
+  })
+}
+
+# Run the application
+shinyApp(ui = ui, server = server)
